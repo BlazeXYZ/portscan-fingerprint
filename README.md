@@ -1,39 +1,53 @@
+<div align="center">
+
 # portscan-fingerprint
+
+**Asset discovery and exposure assessment. Scans a host, identifies the software behind every open port, and tells you what an attacker could do with it.**
 
 [![tests](https://github.com/BlazeXYZ/portscan-fingerprint/actions/workflows/tests.yml/badge.svg)](https://github.com/BlazeXYZ/portscan-fingerprint/actions/workflows/tests.yml)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen)
 ![license: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
 
+<img src="docs/report.jpg" alt="HTML report generated from a scan of the local lab" width="820">
+
+<sub>Report from a scan of the bundled lab. The full file is <a href="docs/sample-report.html"><code>docs/sample-report.html</code></a>; download it and open it in a browser.</sub>
+
+</div>
+
+---
+
+## Table of contents
+
+1. [The problem](#the-problem)
+2. [What portscan-fingerprint does](#what-portscan-fingerprint-does)
+3. [Quick start](#quick-start)
+4. [Demo: a scan of the bundled lab](#demo-a-scan-of-the-bundled-lab)
+5. [Specification](#specification)
+6. [Findings and MITRE ATT&CK mapping](#findings-and-mitre-attck-mapping)
+7. [Architecture](#architecture)
+8. [Output formats](#output-formats)
+9. [Key design decisions](#key-design-decisions)
+10. [Security of the tool itself](#security-of-the-tool-itself)
+11. [Testing and CI](#testing-and-ci)
+12. [Limitations and roadmap](#limitations-and-roadmap)
+13. [Legal and ethical use](#legal-and-ethical-use)
+
+---
+
+## The problem
+
+You cannot defend what you do not know is exposed. A host can run a forgotten Telnet service, an old web server or a database reachable from the network, and an attacker needs only a port scan to find it. An open port number says little on its own. The useful questions are *what software is listening, which version, and what could be done to it?*
+
+Answering them by hand means grabbing a banner from each port, reading TLS certificates, looking up every version in a vulnerability database and translating the results into risk. Existing tools do this well, but they hide the mechanics behind large dependencies.
+
+**portscan-fingerprint** does the whole chain with the Python standard library, so the mechanics stay readable.
+
+## What portscan-fingerprint does
+
 A Python tool for asset discovery and exposure assessment. It scans a host's TCP ports, identifies the software behind each open port, and reads TLS certificates. It reports what an attacker could do with each finding, mapped to **MITRE ATT&CK**, and matches software versions to known CVEs in the **NIST National Vulnerability Database** by CPE name. Output is a terminal report, JSON, and a self-contained HTML report.
 
 It uses only the Python standard library. That includes the asynchronous scanner, the binary protocol parsers and the X.509 certificate parser.
-
-> **Authorized use only.** Scan only systems you own or have written permission to test. The tool refuses public IP addresses unless you pass `--i-own-this`. Every example below targets the local test lab included in this repo.
-
-![HTML report generated from a scan of the local lab](docs/report.jpg)
-
-<sub>Report from a scan of the bundled lab. The full file is [`docs/sample-report.html`](docs/sample-report.html); download it and open it in a browser.</sub>
-
----
-
-## Contents
-
-1. [Highlights](#highlights)
-2. [Quick start](#quick-start)
-3. [Usage and options](#usage-and-options)
-4. [How it works](#how-it-works)
-5. [Project layout](#project-layout)
-6. [Specifications](#specifications)
-7. [Design decisions and trade-offs](#design-decisions-and-trade-offs)
-8. [Security and ethics](#security-and-ethics)
-9. [Testing strategy](#testing-strategy)
-10. [Limitations](#limitations)
-11. [Roadmap](#roadmap)
-
----
-
-## Highlights
 
 | Capability | Detail |
 |---|---|
@@ -74,7 +88,31 @@ pip install -r requirements.txt   # just pytest
 python -m pytest
 ```
 
-### Example output
+### Usage and options
+
+```
+python portscan.py TARGET [-p PORTS] [-t SECONDS] [-c N] [--cve] [--cve-mode {cpe,keyword}]
+                          [--json FILE] [--html FILE] [--i-own-this]
+```
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `TARGET` | | A single hostname or IP address. |
+| `-p, --ports` | 43 common ports | A list and/or ranges: `22,80,443`, `1-1024`, `20-25,8080`. |
+| `-t, --timeout` | `1.0` | Per-connection timeout in seconds, between 0 and 30. |
+| `-c, --concurrency` | `200` | Number of simultaneous connections, capped at 500. |
+| `--cve` | off | Look up CVE candidates in the NVD. Set `NVD_API_KEY` to raise the rate limit. |
+| `--cve-mode` | `cpe` | `cpe`: exact product and version, with keyword fallback. `keyword`: text search only. |
+| `--json FILE` | | Write machine-readable results. |
+| `--html FILE` | | Write a self-contained HTML report. |
+| `--i-own-this` | | Confirm you are authorized to scan a non-private address. |
+| `--version` | | Print the version. |
+
+Exit codes: `0` on success, `2` on bad input or a refused target.
+
+## Demo: a scan of the bundled lab
+
+Scanning the local lab with `--cve`. The lab serves banners only. Its versions are deliberately old so that CVE lookup returns results.
 
 ```
 Scan report for 127.0.0.1 (127.0.0.1)
@@ -117,96 +155,7 @@ CVE candidates (verify the installed patch level before acting)
     (100 total matches; distro backports are not considered)
 ```
 
-## Usage and options
-
-```
-python portscan.py TARGET [-p PORTS] [-t SECONDS] [-c N] [--cve] [--cve-mode {cpe,keyword}]
-                          [--json FILE] [--html FILE] [--i-own-this]
-```
-
-| Flag | Default | Meaning |
-|---|---|---|
-| `TARGET` | | A single hostname or IP address. |
-| `-p, --ports` | 43 common ports | A list and/or ranges: `22,80,443`, `1-1024`, `20-25,8080`. |
-| `-t, --timeout` | `1.0` | Per-connection timeout in seconds, between 0 and 30. |
-| `-c, --concurrency` | `200` | Number of simultaneous connections, capped at 500. |
-| `--cve` | off | Look up CVE candidates in the NVD. Set `NVD_API_KEY` to raise the rate limit. |
-| `--cve-mode` | `cpe` | `cpe`: exact product and version, with keyword fallback. `keyword`: text search only. |
-| `--json FILE` | | Write machine-readable results. |
-| `--html FILE` | | Write a self-contained HTML report. |
-| `--i-own-this` | | Confirm you are authorized to scan a non-private address. |
-| `--version` | | Print the version. |
-
-Exit codes: `0` on success, `2` on bad input or a refused target.
-
----
-
-## How it works
-
-```mermaid
-flowchart LR
-    A[CLI args] --> B{Authorization guard<br/>private / loopback?}
-    B -- no, and no --i-own-this --> X[exit 2]
-    B -- yes --> C[Async connect scan<br/>open / closed / filtered]
-    C -- open --> D[Banner grab<br/>listen, then probe]
-    D -- silent or TLS alert --> D2[Retry with TLS<br/>read certificate]
-    D --> E[Fingerprint<br/>signatures + binary parsers]
-    D2 --> E
-    E --> F[(PortResult)]
-    F -- --cve --> G[NVD lookup<br/>CPE name, keyword fallback<br/>rate limit + cache]
-    G --> F
-    F --> H[Findings engine<br/>rules + ATT&CK mapping]
-    H --> I[Terminal report]
-    H --> J[JSON]
-    J --> K[HTML report]
-```
-
-1. **Authorize.** The target is resolved and checked with `ipaddress`. Private, loopback and link-local addresses are allowed. Anything else needs `--i-own-this`.
-2. **Probe state.** For each port, under a semaphore, `asyncio.open_connection` attempts a full TCP handshake:
-   - A completed handshake means **open**.
-   - `ConnectionRefusedError` (the host replied with RST) means **closed**.
-   - A timeout or any other `OSError` means **filtered**, because something dropped the packets.
-3. **Grab a banner** on a fresh connection to each open port:
-   - On HTTP ports, send `HEAD / HTTP/1.0` right away.
-   - Otherwise, listen first, because SSH, FTP, SMTP, MySQL and Telnet send a greeting.
-   - If nothing arrives, send a probe: Redis gets `PING`, and anything else gets the HTTP request.
-4. **Detect TLS.** If a non-TLS port stayed silent, or answered with a TLS alert record, reconnect with a TLS handshake. Record the negotiated version and the certificate as raw DER bytes.
-5. **Fingerprint** the bytes into `(service, product, version)`.
-6. **Look up CVEs** (optional) for each service with a product and version.
-7. **Assess.** Run the findings rules on each port, after the CVE lookup because CVE severity feeds the findings.
-8. **Report** in the terminal, then optionally as JSON and HTML. The HTML is rendered from the JSON dictionary.
-
-## Project layout
-
-```
-portscan-fingerprint/
-├── portscan.py        CLI, authorization guard, async scanner, banner grabbing, terminal and JSON output
-├── fingerprint.py     Banner bytes -> (service, product, version). Pure functions.
-├── certinfo.py        Minimal DER/X.509 reader for unverified certificates. Pure functions.
-├── nvd.py             NVD CVE API 2.0 client: CPE/keyword lookup, CVSS ranking, rate limit, cache
-├── findings.py        Exposure rules and the MITRE ATT&CK technique table. Pure functions.
-├── report.py          JSON -> self-contained HTML report (also a standalone CLI)
-├── lab.py             Local fake services for demos and end-to-end tests
-├── tests/
-│   └── test_portscan.py
-├── docs/
-│   ├── report.jpg           screenshot used above
-│   ├── sample-report.html   HTML report from a lab scan
-│   └── sample-scan.json     the JSON it was rendered from
-├── .github/workflows/tests.yml   CI: Linux (3.10–3.14), Windows, macOS
-├── pyproject.toml     pytest configuration
-├── requirements.txt   dev dependency (pytest) only
-├── CHANGELOG.md
-└── LICENSE
-```
-
-The split follows one rule: **everything that touches the network is kept apart from everything that interprets data.**
-- `fingerprint.py`, `certinfo.py`, `findings.py` and most of `nvd.py` are pure functions, so you can test them with byte strings and dictionaries.
-- `portscan.py` and the HTTP part of `nvd.py` do the input/output.
-
----
-
-## Specifications
+## Specification
 
 ### Port states
 
@@ -273,7 +222,9 @@ CPE mappings (`nvd.CPE_PRODUCTS`), each checked against the live API:
 | MariaDB | `mariadb:mariadb` |
 | Redis | `redis:redis` |
 
-### Findings rules
+## Findings and MITRE ATT&CK mapping
+
+Each rule is tagged with the ATT&CK technique an attacker would use against the finding.
 
 | Severity | Rule | ATT&CK |
 |---|---|---|
@@ -291,6 +242,79 @@ CPE mappings (`nvd.CPE_PRODUCTS`), each checked against the live API:
 | LOW | TLS certificate expires within 30 days | none |
 | LOW | Self-signed TLS certificate | T1557 |
 | INFO | SSH remote login exposed | T1021.004, T1110 |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[CLI args] --> B{Authorization guard<br/>private / loopback?}
+    B -- no, and no --i-own-this --> X[exit 2]
+    B -- yes --> C[Async connect scan<br/>open / closed / filtered]
+    C -- open --> D[Banner grab<br/>listen, then probe]
+    D -- silent or TLS alert --> D2[Retry with TLS<br/>read certificate]
+    D --> E[Fingerprint<br/>signatures + binary parsers]
+    D2 --> E
+    E --> F[(PortResult)]
+    F -- --cve --> G[NVD lookup<br/>CPE name, keyword fallback<br/>rate limit + cache]
+    G --> F
+    F --> H[Findings engine<br/>rules + ATT&CK mapping]
+    H --> I[Terminal report]
+    H --> J[JSON]
+    J --> K[HTML report]
+```
+
+1. **Authorize.** The target is resolved and checked with `ipaddress`. Private, loopback and link-local addresses are allowed. Anything else needs `--i-own-this`.
+2. **Probe state.** For each port, under a semaphore, `asyncio.open_connection` attempts a full TCP handshake:
+   - A completed handshake means **open**.
+   - `ConnectionRefusedError` (the host replied with RST) means **closed**.
+   - A timeout or any other `OSError` means **filtered**, because something dropped the packets.
+3. **Grab a banner** on a fresh connection to each open port:
+   - On HTTP ports, send `HEAD / HTTP/1.0` right away.
+   - Otherwise, listen first, because SSH, FTP, SMTP, MySQL and Telnet send a greeting.
+   - If nothing arrives, send a probe: Redis gets `PING`, and anything else gets the HTTP request.
+4. **Detect TLS.** If a non-TLS port stayed silent, or answered with a TLS alert record, reconnect with a TLS handshake. Record the negotiated version and the certificate as raw DER bytes.
+5. **Fingerprint** the bytes into `(service, product, version)`.
+6. **Look up CVEs** (optional) for each service with a product and version.
+7. **Assess.** Run the findings rules on each port, after the CVE lookup because CVE severity feeds the findings.
+8. **Report** in the terminal, then optionally as JSON and HTML. The HTML is rendered from the JSON dictionary.
+
+### Project layout
+
+```
+portscan-fingerprint/
+├── portscan.py        CLI, authorization guard, async scanner, banner grabbing, terminal and JSON output
+├── fingerprint.py     Banner bytes -> (service, product, version). Pure functions.
+├── certinfo.py        Minimal DER/X.509 reader for unverified certificates. Pure functions.
+├── nvd.py             NVD CVE API 2.0 client: CPE/keyword lookup, CVSS ranking, rate limit, cache
+├── findings.py        Exposure rules and the MITRE ATT&CK technique table. Pure functions.
+├── report.py          JSON -> self-contained HTML report (also a standalone CLI)
+├── lab.py             Local fake services for demos and end-to-end tests
+├── tests/
+│   └── test_portscan.py
+├── docs/
+│   ├── report.jpg           screenshot used above
+│   ├── sample-report.html   HTML report from a lab scan
+│   └── sample-scan.json     the JSON it was rendered from
+├── .github/workflows/tests.yml   CI: Linux (3.10–3.14), Windows, macOS
+├── pyproject.toml     pytest configuration
+├── requirements.txt   dev dependency (pytest) only
+├── CHANGELOG.md
+└── LICENSE
+```
+
+The split follows one rule: **everything that touches the network is kept apart from everything that interprets data.**
+- `fingerprint.py`, `certinfo.py`, `findings.py` and most of `nvd.py` are pure functions, so you can test them with byte strings and dictionaries.
+- `portscan.py` and the HTTP part of `nvd.py` do the input/output.
+
+## Output formats
+
+| Flag | Output |
+|---|---|
+| *(default)* | Terminal report: port table, TLS certificates, exposure findings, CVE candidates |
+| `--json FILE` | Machine-readable results (abridged schema below) |
+| `--html FILE` | Self-contained HTML report: no JavaScript, no external resources. See [`docs/sample-report.html`](docs/sample-report.html) |
+
+Exit codes: **0** success, **2** bad input or a refused target. `python report.py scan.json -o report.html` rebuilds the HTML from saved JSON without rescanning.
 
 ### JSON schema (abridged)
 
@@ -318,9 +342,7 @@ CPE mappings (`nvd.CPE_PRODUCTS`), each checked against the live API:
 }
 ```
 
----
-
-## Design decisions and trade-offs
+## Key design decisions
 
 Each section gives the choice, the alternatives and the reasoning.
 
@@ -371,7 +393,7 @@ Each section gives the choice, the alternatives and the reasoning.
 - **Why:**
   - It keeps state classification and service interaction independent. Each is simple and testable, and `probe_state` never has to send anything.
   - It costs one extra connection per *open* port only. Closed and filtered ports, usually the vast majority, cost exactly one attempt.
-- **Honest trade-off:** reusing the connection would be slightly faster and quieter. It is a reasonable optimization if wide scans ever matter. See the [Roadmap](#roadmap).
+- **Honest trade-off:** reusing the connection would be slightly faster and quieter. It is a reasonable optimization if wide scans ever matter. See the [roadmap](#limitations-and-roadmap).
 
 ### 5. Listen first, then probe
 
@@ -537,17 +559,14 @@ This change made the biggest difference to result quality. The numbers below com
   - For a portfolio tool, clone-and-run with no install is the simplest experience.
 - `pyproject.toml` holds only the pytest configuration.
 
----
+## Security of the tool itself
 
-## Security and ethics
-
-- **Authorized use only.** Scanning systems without permission may be illegal where you are. Use your own machines, a VM lab, or intentionally vulnerable targets such as the bundled lab.
 - **The lab is not vulnerable.** It serves banners only. The versions are deliberately old so that CVE lookup returns results.
 - **The lab's TLS key never touches the repo.** `lab.py` creates a throwaway self-signed certificate with `openssl` in a temporary directory at startup, loads it into memory, and deletes the files. The test suite contains only the **public** certificate, used as a parser fixture.
 - **Banners and certificates are untrusted input.** Banners are reduced to printable ASCII, and certificate names have control characters replaced. That stops ANSI escape-sequence injection into your terminal. The HTML report escapes every value.
 - **API keys** come from the `NVD_API_KEY` environment variable and are never written to disk or output.
 
-## Testing strategy
+## Testing and CI
 
 28 tests run in about 3 seconds with **no network access**:
 
@@ -563,10 +582,12 @@ This change made the biggest difference to result quality. The numbers below com
 
 **CI** ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)) runs Python 3.10–3.14 on Ubuntu, and the newest Python on Windows and macOS. Socket behavior really does differ between operating systems:
 
-- Windows retries a connection refused with RST for about 2 seconds before reporting it. That was found while developing this project and is documented under [Limitations](#limitations).
+- Windows retries a connection refused with RST for about 2 seconds before reporting it. That was found while developing this project and is documented under [Limitations and roadmap](#limitations-and-roadmap).
 - If `openssl` is missing on a runner, the lab skips HTTPS and the test adapts instead of failing.
 
-## Limitations
+## Limitations and roadmap
+
+**Known limitations**, written down on purpose:
 
 - **One host, TCP only.** No CIDR ranges, UDP or OS detection.
 - **The best TLS version only.** A server that also accepts TLS 1.0 is flagged only when 1.0 is the newest version it offers.
@@ -576,7 +597,7 @@ This change made the biggest difference to result quality. The numbers below com
 - **Windows timing.** The Windows TCP stack retries a refused connection for about 2 s (measured 2.05 s on Windows 10). With `--timeout` below that, closed ports are reported as *filtered*. Use `-t 2.5` when the closed/filtered split matters.
 - **No result paging.** CPE lookups rank only the first 200 CVEs.
 
-## Roadmap
+**Roadmap:**
 
 - Protocol-specific probes: SMB dialect negotiation, RDP security layer, SSH key exchange and host-key algorithms.
 - Enumerate every supported TLS version and flag weak cipher suites.
@@ -585,6 +606,14 @@ This change made the biggest difference to result quality. The numbers below com
 - SARIF or ECS output for import into code-scanning dashboards or a SIEM.
 - Optional CIDR scanning with host discovery and stricter guard rails.
 
-## License
+## Legal and ethical use
 
-[MIT](LICENSE)
+- **Authorized use only.** Scanning systems without permission may be illegal where you are. Use your own machines, a VM lab, or intentionally vulnerable targets such as the bundled lab. The tool refuses public IP addresses unless you pass `--i-own-this`. Every example in this README targets the local test lab included in this repo.
+
+---
+
+<div align="center">
+
+MIT License · Built by <b>BlazeXYZ</b> · See also: <a href="CHANGELOG.md">Changelog</a>
+
+</div>
