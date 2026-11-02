@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+venv/
+
+# NVD response cache (regenerated on demand)
+.nvd_cache.json
+
+# Scan output written in the repo root. Curated samples live in docs/.
+/scan-*.json
+/report*.html
+*.json.bak

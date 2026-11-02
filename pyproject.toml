@@ -1,0 +1,6 @@
+# Tool configuration only. This project is a set of runnable scripts, not an
+# installable package (see "Why not a pip package?" in the README).
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

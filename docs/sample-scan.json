@@ -1,0 +1,497 @@
+{
+  "tool": "portscan-fingerprint 1.1",
+  "target": "127.0.0.1",
+  "address": "127.0.0.1",
+  "scanned_at": "2026-11-02T08:07:08+00:00",
+  "ports_scanned": 7,
+  "duration_seconds": 0.18,
+  "open": [
+    {
+      "port": 2121,
+      "state": "open",
+      "service": "ftp",
+      "product": "vsftpd",
+      "version": "3.0.3",
+      "banner": "220 (vsFTPd 3.0.3)",
+      "tls": null,
+      "cert": null,
+      "cves": [
+        {
+          "id": "CVE-2021-30047",
+          "score": 7.5,
+          "severity": "HIGH",
+          "summary": "VSFTPD 3.0.3 allows attackers to cause a denial of service due to limited number of connections allowed."
+        },
+        {
+          "id": "CVE-2021-3618",
+          "score": 7.4,
+          "severity": "HIGH",
+          "summary": "ALPACA is an application layer protocol content confusion attack, exploiting TLS servers implementing different protocols but using compa..."
+        }
+      ],
+      "cve_total": 2,
+      "cve_method": "cpe",
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "MEDIUM",
+          "title": "FTP without TLS",
+          "detail": "FTP logins and file contents are sent in cleartext. Prefer SFTP or FTPS.",
+          "attack": [
+            {
+              "id": "T1040",
+              "name": "Network Sniffing",
+              "url": "https://attack.mitre.org/techniques/T1040/"
+            },
+            {
+              "id": "T1110",
+              "name": "Brute Force",
+              "url": "https://attack.mitre.org/techniques/T1110/"
+            }
+          ]
+        },
+        {
+          "severity": "HIGH",
+          "title": "Known high CVEs for vsftpd 3.0.3",
+          "detail": "Worst candidate CVE-2021-30047 (CVSS 7.5) out of 2 matches. Confirm the installed patch level; distros backport fixes.",
+          "attack": [
+            {
+              "id": "T1210",
+              "name": "Exploitation of Remote Services",
+              "url": "https://attack.mitre.org/techniques/T1210/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "port": 2222,
+      "state": "open",
+      "service": "ssh",
+      "product": "OpenSSH",
+      "version": "8.2p1",
+      "banner": "SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.5",
+      "tls": null,
+      "cert": null,
+      "cves": [
+        {
+          "id": "CVE-2023-38408",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "The PKCS#11 feature in ssh-agent in OpenSSH before 9.3p2 has an insufficiently trustworthy search path, leading to remote code execution ..."
+        },
+        {
+          "id": "CVE-2008-3844",
+          "score": 9.3,
+          "severity": "CRITICAL",
+          "summary": "Certain Red Hat Enterprise Linux (RHEL) 4 and 5 packages for OpenSSH, as signed in August 2008 using a legitimate Red Hat GPG key, contai..."
+        },
+        {
+          "id": "CVE-2026-60002",
+          "score": 7.7,
+          "severity": "HIGH",
+          "summary": "ssh in OpenSSH before 10.4 can have a use-after-free when a server changes its host key during a key re-exchange. (This outcome occurs on..."
+        },
+        {
+          "id": "CVE-2020-12062",
+          "score": 7.5,
+          "severity": "HIGH",
+          "summary": "The scp client in OpenSSH 8.2 incorrectly sends duplicate responses to the server upon a utimes system call failure, which allows a malic..."
+        },
+        {
+          "id": "CVE-2026-35385",
+          "score": 7.5,
+          "severity": "HIGH",
+          "summary": "In OpenSSH before 10.3, a file downloaded by scp may be installed setuid or setgid, an outcome contrary to some users' expectations, if t..."
+        }
+      ],
+      "cve_total": 39,
+      "cve_method": "cpe",
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "INFO",
+          "title": "SSH remote login exposed",
+          "detail": "Interactive login is reachable here; expect password-guessing traffic. Restrict by firewall or VPN and require keys or MFA.",
+          "attack": [
+            {
+              "id": "T1021.004",
+              "name": "Remote Services: SSH",
+              "url": "https://attack.mitre.org/techniques/T1021/004/"
+            },
+            {
+              "id": "T1110",
+              "name": "Brute Force",
+              "url": "https://attack.mitre.org/techniques/T1110/"
+            }
+          ]
+        },
+        {
+          "severity": "CRITICAL",
+          "title": "Known critical CVEs for OpenSSH 8.2p1",
+          "detail": "Worst candidate CVE-2023-38408 (CVSS 9.8) out of 39 matches. Confirm the installed patch level; distros backport fixes.",
+          "attack": [
+            {
+              "id": "T1210",
+              "name": "Exploitation of Remote Services",
+              "url": "https://attack.mitre.org/techniques/T1210/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "port": 2323,
+      "state": "open",
+      "service": "telnet",
+      "product": null,
+      "version": null,
+      "banner": "lab login:",
+      "tls": null,
+      "cert": null,
+      "cves": [],
+      "cve_total": 0,
+      "cve_method": null,
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "HIGH",
+          "title": "Telnet: cleartext remote login",
+          "detail": "Telnet sends usernames, passwords and session data unencrypted. Replace it with SSH.",
+          "attack": [
+            {
+              "id": "T1040",
+              "name": "Network Sniffing",
+              "url": "https://attack.mitre.org/techniques/T1040/"
+            },
+            {
+              "id": "T1021",
+              "name": "Remote Services",
+              "url": "https://attack.mitre.org/techniques/T1021/"
+            },
+            {
+              "id": "T1110",
+              "name": "Brute Force",
+              "url": "https://attack.mitre.org/techniques/T1110/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "port": 2525,
+      "state": "open",
+      "service": "smtp",
+      "product": "Postfix",
+      "version": null,
+      "banner": "220 mail.lab ESMTP Postfix (Ubuntu)",
+      "tls": null,
+      "cert": null,
+      "cves": [],
+      "cve_total": 0,
+      "cve_method": null,
+      "cve_error": null,
+      "findings": []
+    },
+    {
+      "port": 3307,
+      "state": "open",
+      "service": "mysql",
+      "product": "MySQL",
+      "version": "5.7.30",
+      "banner": "5.7.30-0ubuntu0.18.04.1 abcdefgh",
+      "tls": null,
+      "cert": null,
+      "cves": [
+        {
+          "id": "CVE-2019-14540",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "A Polymorphic Typing issue was discovered in FasterXML jackson-databind before 2.9.10. It is related to com.zaxxer.hikari.HikariConfig."
+        },
+        {
+          "id": "CVE-2020-1967",
+          "score": 7.5,
+          "severity": "HIGH",
+          "summary": "Server or client applications that call the SSL_check_chain() function during or after a TLS 1.3 handshake may crash due to a NULL pointe..."
+        },
+        {
+          "id": "CVE-2023-21980",
+          "score": 7.1,
+          "severity": "HIGH",
+          "summary": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Client programs).  Supported versions that are affected are 5.7.41 ..."
+        },
+        {
+          "id": "CVE-2020-14539",
+          "score": 6.5,
+          "severity": "MEDIUM",
+          "summary": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: Optimizer). Supported versions that are affected are 5.6.48..."
+        },
+        {
+          "id": "CVE-2020-14576",
+          "score": 6.5,
+          "severity": "MEDIUM",
+          "summary": "Vulnerability in the MySQL Server product of Oracle MySQL (component: Server: UDF). Supported versions that are affected are 5.7.30 and p..."
+        }
+      ],
+      "cve_total": 81,
+      "cve_method": "cpe",
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "MEDIUM",
+          "title": "Database reachable over the network (mysql)",
+          "detail": "Databases are rarely meant to face the network directly. Limit access to application hosts.",
+          "attack": [
+            {
+              "id": "T1110",
+              "name": "Brute Force",
+              "url": "https://attack.mitre.org/techniques/T1110/"
+            },
+            {
+              "id": "T1210",
+              "name": "Exploitation of Remote Services",
+              "url": "https://attack.mitre.org/techniques/T1210/"
+            }
+          ]
+        },
+        {
+          "severity": "CRITICAL",
+          "title": "Known critical CVEs for MySQL 5.7.30",
+          "detail": "Worst candidate CVE-2019-14540 (CVSS 9.8) out of 81 matches. Confirm the installed patch level; distros backport fixes.",
+          "attack": [
+            {
+              "id": "T1210",
+              "name": "Exploitation of Remote Services",
+              "url": "https://attack.mitre.org/techniques/T1210/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "port": 8080,
+      "state": "open",
+      "service": "http",
+      "product": "Apache httpd",
+      "version": "2.4.49",
+      "banner": "HTTP/1.1 200 OK",
+      "tls": null,
+      "cert": null,
+      "cves": [
+        {
+          "id": "CVE-2021-41773",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "A flaw was found in a change made to path normalization in Apache HTTP Server 2.4.49. An attacker could use a path traversal attack to ma..."
+        },
+        {
+          "id": "CVE-2021-42013",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "It was found that the fix for CVE-2021-41773 in Apache HTTP Server 2.4.50 was insufficient. An attacker could use a path traversal attack..."
+        },
+        {
+          "id": "CVE-2021-44790",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "A carefully crafted request body can cause a buffer overflow in the mod_lua multipart parser (r:parsebody() called from Lua scripts). The..."
+        },
+        {
+          "id": "CVE-2022-22720",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "Apache HTTP Server 2.4.52 and earlier fails to close inbound connection when errors are encountered discarding the request body, exposing..."
+        },
+        {
+          "id": "CVE-2022-23943",
+          "score": 9.8,
+          "severity": "CRITICAL",
+          "summary": "Out-of-bounds Write vulnerability in mod_sed of Apache HTTP Server allows an attacker to overwrite heap memory with possibly attacker pro..."
+        }
+      ],
+      "cve_total": 100,
+      "cve_method": "cpe",
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "LOW",
+          "title": "Web server discloses its version",
+          "detail": "The Server header reveals 'Apache httpd 2.4.49', which lets an attacker match exploits without probing. Suppress the version (e.g. ServerTokens Prod, server_tokens off).",
+          "attack": [
+            {
+              "id": "T1592.002",
+              "name": "Gather Victim Host Information: Software",
+              "url": "https://attack.mitre.org/techniques/T1592/002/"
+            }
+          ]
+        },
+        {
+          "severity": "CRITICAL",
+          "title": "Known critical CVEs for Apache httpd 2.4.49",
+          "detail": "Worst candidate CVE-2021-41773 (CVSS 9.8) out of 100 matches. Confirm the installed patch level; distros backport fixes.",
+          "attack": [
+            {
+              "id": "T1190",
+              "name": "Exploit Public-Facing Application",
+              "url": "https://attack.mitre.org/techniques/T1190/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "port": 8443,
+      "state": "open",
+      "service": "https",
+      "product": "nginx",
+      "version": "1.18.0",
+      "banner": "HTTP/1.1 200 OK",
+      "tls": "TLSv1.3",
+      "cert": {
+        "subject": "lab.local",
+        "issuer": "lab.local",
+        "sans": [
+          "lab.local",
+          "localhost",
+          "127.0.0.1"
+        ],
+        "not_before": "2026-11-02T08:06:38+00:00",
+        "not_after": "2026-11-22T08:06:38+00:00",
+        "days_left": 19,
+        "expired": false,
+        "self_signed": true
+      },
+      "cves": [
+        {
+          "id": "CVE-2021-23017",
+          "score": 7.7,
+          "severity": "HIGH",
+          "summary": "A security issue in nginx resolver was identified, which might allow an attacker who is able to forge UDP packets from the DNS server to ..."
+        },
+        {
+          "id": "CVE-2023-44487",
+          "score": 7.5,
+          "severity": "HIGH",
+          "summary": "The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly,..."
+        },
+        {
+          "id": "CVE-2021-3618",
+          "score": 7.4,
+          "severity": "HIGH",
+          "summary": "ALPACA is an application layer protocol content confusion attack, exploiting TLS servers implementing different protocols but using compa..."
+        },
+        {
+          "id": "CVE-2022-41742",
+          "score": 7.1,
+          "severity": "HIGH",
+          "summary": "NGINX Open Source before versions 1.23.2 and 1.22.1, NGINX Open Source Subscription before versions R2 P1 and R1 P1, and NGINX Plus befor..."
+        },
+        {
+          "id": "CVE-2022-41741",
+          "score": 7.0,
+          "severity": "HIGH",
+          "summary": "NGINX Open Source before versions 1.23.2 and 1.22.1, NGINX Open Source Subscription before versions R2 P1 and R1 P1, and NGINX Plus befor..."
+        }
+      ],
+      "cve_total": 6,
+      "cve_method": "cpe",
+      "cve_error": null,
+      "findings": [
+        {
+          "severity": "LOW",
+          "title": "Web server discloses its version",
+          "detail": "The Server header reveals 'nginx 1.18.0', which lets an attacker match exploits without probing. Suppress the version (e.g. ServerTokens Prod, server_tokens off).",
+          "attack": [
+            {
+              "id": "T1592.002",
+              "name": "Gather Victim Host Information: Software",
+              "url": "https://attack.mitre.org/techniques/T1592/002/"
+            }
+          ]
+        },
+        {
+          "severity": "LOW",
+          "title": "TLS certificate expires soon",
+          "detail": "19 days left (until 2026-11-22).",
+          "attack": []
+        },
+        {
+          "severity": "LOW",
+          "title": "Self-signed TLS certificate",
+          "detail": "No trusted CA vouches for this certificate, so clients cannot tell it apart from an attacker's.",
+          "attack": [
+            {
+              "id": "T1557",
+              "name": "Adversary-in-the-Middle",
+              "url": "https://attack.mitre.org/techniques/T1557/"
+            }
+          ]
+        },
+        {
+          "severity": "HIGH",
+          "title": "Known high CVEs for nginx 1.18.0",
+          "detail": "Worst candidate CVE-2021-23017 (CVSS 7.7) out of 6 matches. Confirm the installed patch level; distros backport fixes.",
+          "attack": [
+            {
+              "id": "T1190",
+              "name": "Exploit Public-Facing Application",
+              "url": "https://attack.mitre.org/techniques/T1190/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "closed": 0,
+  "filtered": 0,
+  "severity_counts": {
+    "CRITICAL": 3,
+    "HIGH": 3,
+    "MEDIUM": 2,
+    "LOW": 4,
+    "INFO": 1
+  },
+  "attack_techniques": [
+    {
+      "id": "T1021",
+      "name": "Remote Services",
+      "url": "https://attack.mitre.org/techniques/T1021/"
+    },
+    {
+      "id": "T1021.004",
+      "name": "Remote Services: SSH",
+      "url": "https://attack.mitre.org/techniques/T1021/004/"
+    },
+    {
+      "id": "T1040",
+      "name": "Network Sniffing",
+      "url": "https://attack.mitre.org/techniques/T1040/"
+    },
+    {
+      "id": "T1110",
+      "name": "Brute Force",
+      "url": "https://attack.mitre.org/techniques/T1110/"
+    },
+    {
+      "id": "T1190",
+      "name": "Exploit Public-Facing Application",
+      "url": "https://attack.mitre.org/techniques/T1190/"
+    },
+    {
+      "id": "T1210",
+      "name": "Exploitation of Remote Services",
+      "url": "https://attack.mitre.org/techniques/T1210/"
+    },
+    {
+      "id": "T1557",
+      "name": "Adversary-in-the-Middle",
+      "url": "https://attack.mitre.org/techniques/T1557/"
+    },
+    {
+      "id": "T1592.002",
+      "name": "Gather Victim Host Information: Software",
+      "url": "https://attack.mitre.org/techniques/T1592/002/"
+    }
+  ]
+}
