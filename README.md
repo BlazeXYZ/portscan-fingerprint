@@ -614,6 +614,6 @@ This change made the biggest difference to result quality. The numbers below com
 
 <div align="center">
 
-MIT License · Built by <b>BlazeXYZ</b> · See also: <a href="CHANGELOG.md">Changelog</a>
+MIT License · Built by <b>BlazeXYZ</b> · See also: <a href="CHANGELOG.md">Changelog</a> · Part of <a href="https://blazexyz.com">blazexyz.com</a>
 
 </div>
