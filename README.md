@@ -1,7 +1,7 @@
 # portscan-fingerprint
 
 [![tests](https://github.com/BlazeXYZ/portscan-fingerprint/actions/workflows/tests.yml/badge.svg)](https://github.com/BlazeXYZ/portscan-fingerprint/actions/workflows/tests.yml)
-![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen)
 ![license: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -48,7 +48,7 @@ It uses only the Python standard library. That includes the asynchronous scanner
 
 ## Quick start
 
-Requires Python 3.9 or later. Nothing to install. The HTTPS lab service also needs the `openssl` command line tool, which ships with Git for Windows, macOS and most Linux distributions.
+Requires Python 3.10 or later. Nothing to install. The HTTPS lab service also needs the `openssl` command line tool, which ships with Git for Windows, macOS and most Linux distributions.
 
 ```bash
 git clone https://github.com/BlazeXYZ/portscan-fingerprint.git
@@ -193,7 +193,7 @@ portscan-fingerprint/
 │   ├── report.jpg           screenshot used above
 │   ├── sample-report.html   HTML report from a lab scan
 │   └── sample-scan.json     the JSON it was rendered from
-├── .github/workflows/tests.yml   CI: Linux (3.9–3.13), Windows, macOS
+├── .github/workflows/tests.yml   CI: Linux (3.10–3.14), Windows, macOS
 ├── pyproject.toml     pytest configuration
 ├── requirements.txt   dev dependency (pytest) only
 ├── CHANGELOG.md
@@ -334,7 +334,7 @@ Each section gives the choice, the alternatives and the reasoning.
   - `cryptography` for certificates.
 - **Why:**
   - The project is meant to show the mechanics. Wrapping Nmap would show how to call Nmap, not how service detection works.
-  - With zero dependencies, `git clone` then `python portscan.py` works on any machine with Python 3.9+, including a locked-down lab VM.
+  - With zero dependencies, `git clone` then `python portscan.py` works on any machine with Python 3.10+, including a locked-down lab VM.
   - There is no supply-chain surface: a security tool that pulls in dozens of packages is a poor example.
 - **Cost:** two things had to be written by hand that libraries would provide. One is the X.509 parser (decision 8). The other is HTTP retry and pooling, which this tool doesn't need.
 
@@ -561,7 +561,7 @@ This change made the biggest difference to result quality. The numbers below com
 | Reports | An XSS banner is escaped; old or empty JSON still renders; the CLI writes valid JSON and HTML |
 | End to end | Starts the lab on **ephemeral ports** (port 0), so tests never collide with real services. Scans it, checks every fingerprint, TLS detection on a random port, the certificate, the Telnet finding, and a closed port. |
 
-**CI** ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)) runs Python 3.9–3.13 on Ubuntu, and the newest Python on Windows and macOS. Socket behavior really does differ between operating systems:
+**CI** ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)) runs Python 3.10–3.14 on Ubuntu, and the newest Python on Windows and macOS. Socket behavior really does differ between operating systems:
 
 - Windows retries a connection refused with RST for about 2 seconds before reporting it. That was found while developing this project and is documented under [Limitations](#limitations).
 - If `openssl` is missing on a runner, the lab skips HTTPS and the test adapts instead of failing.

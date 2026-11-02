@@ -12,17 +12,17 @@ jobs:
         include:
           # Every supported Python on Linux, plus the newest on Windows and macOS,
           # because socket and TLS behaviour differs per OS (see README: Windows RST retries).
-          - { os: ubuntu-latest, python: "3.9" }
           - { os: ubuntu-latest, python: "3.10" }
           - { os: ubuntu-latest, python: "3.11" }
           - { os: ubuntu-latest, python: "3.12" }
           - { os: ubuntu-latest, python: "3.13" }
-          - { os: windows-latest, python: "3.13" }
-          - { os: macos-latest, python: "3.13" }
+          - { os: ubuntu-latest, python: "3.14" }
+          - { os: windows-latest, python: "3.14" }
+          - { os: macos-latest, python: "3.14" }
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -r requirements.txt

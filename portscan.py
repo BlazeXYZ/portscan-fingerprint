@@ -25,7 +25,7 @@ from findings import SEVERITY_ORDER, TECHNIQUES, assess, attack_url, sort_findin
 from fingerprint import banner_summary, fingerprint
 from nvd import NVDClient
 
-VERSION = "1.1"
+VERSION = "1.1.1"
 COMMON_PORTS = [
     21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 389, 443, 445, 465, 587, 631, 636,
     993, 995, 1433, 1521, 2049, 2121, 2222, 2375, 3000, 3306, 3389, 5000, 5432, 5900,

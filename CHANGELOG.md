@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 (2026-11-02)
+
+### Changed
+- Minimum supported Python is now 3.10. Python 3.9 reached end-of-life in October 2025, and
+  GitHub's Ubuntu 26.04 runners no longer provide it.
+- CI tests Python 3.10–3.14 on Linux and 3.14 on Windows and macOS, using `actions/checkout@v7`
+  and `actions/setup-python@v7` (fixes the Node 20 deprecation warnings).
+
 ## 1.1.0 (2026-11-02)
 
 ### Added
