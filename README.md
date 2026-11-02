@@ -112,6 +112,9 @@ Exit codes: `0` on success, `2` on bad input or a refused target.
 
 ## Demo: a scan of the bundled lab
 
+<p align="center"><img src="docs/demo.svg" alt="Animated terminal: portscan-fingerprint scans the local lab, names the software on seven ports, reads the TLS certificate and lists exposure findings mapped to ATT&CK" width="820"></p>
+<p align="center"><sub>Recorded with <a href="https://github.com/BlazeXYZ/termreel">termreel</a> from <a href="docs/demo.reel"><code>docs/demo.reel</code></a>.</sub></p>
+
 Scanning the local lab with `--cve`. The lab serves banners only. Its versions are deliberately old so that CVE lookup returns results.
 
 ```

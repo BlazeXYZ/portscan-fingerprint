@@ -1,0 +1,9 @@
+# README demo. Start the lab first (python lab.py), then render from the repo root:
+#   termreel render docs/demo.reel -o docs/demo.svg
+@cwd ..
+@size 100x30
+@title portscan-fingerprint
+@prompt [bold #db94ed]~/portscan-fingerprint[/] [#ee15ee]❯[/]
+@typing 24
+$ python portscan.py 127.0.0.1 -p 2121,2222,2323,2525,3307,8080,8443
+@sleep 4
